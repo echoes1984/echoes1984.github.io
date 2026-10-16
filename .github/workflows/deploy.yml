@@ -1,0 +1,34 @@
+name: Deploy to GitHub Pages
+
+on:
+  # 每次推送到 main 分支时自动构建发布
+  push:
+    branches: [main]
+  # 允许在 GitHub 网页的 Actions 标签页手动触发
+  workflow_dispatch:
+
+# 允许克隆仓库并创建 Pages 部署
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v7
+      - name: Install, build, and upload your site
+        uses: withastro/action@v6
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

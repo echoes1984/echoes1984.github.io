@@ -1,0 +1,22 @@
+---
+import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
+import Layout from '../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="关于我"
+	description="关于我和这个博客"
+	pubDate={new Date('2026-10-15')}
+	heroImage={AboutHeroImage}
+>
+	<p>你好，我是 echoes1984。</p>
+
+	<p>
+		这个博客用来记录技术笔记、踩坑经验和一些日常思考。把学到的东西写下来、讲清楚，是最好的学习方式——也希望恰好能帮到搜到这里的人。
+	</p>
+
+	<p>
+		博客基于 <a href="https://astro.build">Astro</a> 搭建，源码托管在
+		<a href="https://github.com/echoes1984">GitHub</a>，通过 GitHub Pages 发布，推送即自动更新。
+	</p>
+</Layout>
