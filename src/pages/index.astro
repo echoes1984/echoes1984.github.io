@@ -1,4 +1,6 @@
 ---
+import { getCollection } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
@@ -6,54 +8,94 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to
-				build a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your{' '}
-				<code>astro.config.mjs</code> file. You can customize your setup with{' '}
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like
-				Tailwind, React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>
-					Edit this page in <code>src/pages/index.astro</code>
-				</li>
-				<li>
-					Edit the site header items in <code>src/components/Header.astro</code>
-				</li>
-				<li>
-					Add your name to the footer in <code>src/components/Footer.astro</code>
-				</li>
-				<li>
-					Check out the included blog posts in <code>src/content/blog/</code>
-				</li>
-				<li>
-					Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code>
-				</li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to{' '}
-				<a href="https://docs.astro.build/">read the docs</a> or{' '}
-				<a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out{' '}
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a> by{' '}
-				<a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<section class="intro">
+				<h1>sleeping hub</h1>
+				<p class="tagline">大模型 infra —— 推理引擎、KV Cache、调度与底层系统</p>
+				<p class="bio">
+					我是 <a href="https://github.com/echoes1984">echoes1984</a>。这里记录我在大模型基础设施方向的学习与实践：
+					推理框架（vLLM / SGLang）的内部机制、性能优化，以及踩过的坑。
+				</p>
+			</section>
+			<section class="posts">
+				<h2>最近文章</h2>
+				<ul>
+					{
+						(await getCollection('blog'))
+							.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+							.map((post) => (
+								<li>
+									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+									<span class="date">
+										<FormattedDate date={post.data.pubDate} />
+									</span>
+								</li>
+							))
+					}
+				</ul>
+				<p class="all-posts">
+					<a href="/blog">全部文章 →</a>
+				</p>
+			</section>
 		</main>
 		<Footer />
 	</body>
 </html>
+
+<style>
+	.intro {
+		text-align: center;
+		margin: 2em 0 3em;
+	}
+	.intro h1 {
+		font-size: 3em;
+		letter-spacing: -0.02em;
+	}
+	.tagline {
+		color: var(--accent);
+		font-size: 1.2em;
+		font-weight: 700;
+		margin: 0.5em 0 1em;
+	}
+	.bio {
+		color: rgb(var(--gray));
+	}
+	.posts h2 {
+		font-size: 1.5em;
+		border-bottom: 1px solid rgb(var(--gray-light));
+		padding-bottom: 0.4em;
+	}
+	.posts ul {
+		list-style: none;
+		padding: 0;
+	}
+	.posts li {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1em;
+		padding: 0.6em 0;
+		border-bottom: 1px dashed rgb(var(--gray-light));
+	}
+	.posts a {
+		color: rgb(var(--gray-dark));
+		text-decoration: none;
+	}
+	.posts a:hover {
+		color: var(--accent);
+	}
+	.date {
+		color: rgb(var(--gray));
+		font-size: 0.85em;
+		white-space: nowrap;
+	}
+	.all-posts {
+		margin-top: 1.2em;
+	}
+</style>
