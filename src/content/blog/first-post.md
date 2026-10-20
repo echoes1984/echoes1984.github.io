@@ -2,7 +2,7 @@
 title: '我的第一篇技术博客'
 description: '记录我开始写博客的原因，以及这个博客是怎么搭起来的。'
 pubDate: '2026-10-15'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/hero-cyber.png'
 ---
 
 一直想有一个自己的地方，把学过的东西、踩过的坑沉淀下来。与其让笔记散落在各个角落，不如开一个博客，逼自己把知识整理成能讲清楚的文章——写作本身就是最好的学习方式。

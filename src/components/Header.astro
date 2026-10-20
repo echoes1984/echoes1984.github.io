@@ -11,6 +11,7 @@ import HeaderLink from './HeaderLink.astro';
 		<div class="internal-links">
 			<HeaderLink href="/">首页</HeaderLink>
 			<HeaderLink href="/blog">文章</HeaderLink>
+			<HeaderLink href="/columns">专栏</HeaderLink>
 			<HeaderLink href="/about">关于</HeaderLink>
 		</div>
 		<div class="social-links">
@@ -30,17 +31,26 @@ import HeaderLink from './HeaderLink.astro';
 	header {
 		margin: 0;
 		padding: 0 1em;
-		background: white;
-		box-shadow: 0 2px 8px rgba(var(--black), 5%);
+		background: rgba(11, 18, 32, 0.85);
+		backdrop-filter: blur(8px);
+		border-bottom: 1px solid var(--border);
+		box-shadow: 0 2px 18px rgba(0, 240, 255, 0.08);
+		position: sticky;
+		top: 0;
+		z-index: 10;
 	}
 	h2 {
 		margin: 0;
 		font-size: 1em;
 	}
-
 	h2 a,
 	h2 a.active {
 		text-decoration: none;
+		color: var(--accent);
+		text-shadow: var(--glow-cyan);
+		letter-spacing: 0.06em;
+		font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+		text-transform: lowercase;
 	}
 	nav {
 		display: flex;
@@ -49,17 +59,28 @@ import HeaderLink from './HeaderLink.astro';
 	}
 	nav a {
 		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
+		color: rgb(var(--gray));
+		border-bottom: 2px solid transparent;
 		text-decoration: none;
+	}
+	nav a:hover {
+		color: var(--neon-pink);
 	}
 	nav a.active {
 		text-decoration: none;
+		color: var(--accent);
 		border-bottom-color: var(--accent);
+		text-shadow: var(--glow-cyan);
 	}
 	.social-links,
 	.social-links a {
 		display: flex;
+	}
+	.social-links a {
+		color: rgb(var(--gray));
+	}
+	.social-links a:hover {
+		color: var(--accent);
 	}
 	@media (max-width: 720px) {
 		.social-links {

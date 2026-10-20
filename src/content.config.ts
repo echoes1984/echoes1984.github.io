@@ -14,6 +14,8 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
+			// 专栏/标签：一篇文章可属于多个专栏，如 ["minimax-h3"]
+			tags: z.array(z.string()).default([]),
 		}),
 });
 

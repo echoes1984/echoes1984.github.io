@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MiniMax-H3 Transformer Block：真实矩阵变换逐步拆解</title>
+<style>
+:root{--ink:#172033;--muted:#5b667b;--line:#dce3ee;--bg:#f5f7fb;--card:#fff;--blue:#315ee8;--blue2:#eaf0ff;--teal:#087f8c;--teal2:#e7f7f8;--orange:#b45b09;--orange2:#fff2df;--purple:#7548c8;--purple2:#f2ecff;--green:#287b4c;--green2:#eaf7ef;--shadow:0 12px 32px rgba(26,42,74,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}header{background:linear-gradient(125deg,#10234f,#254fd0 65%,#5586ff);color:#fff;padding:48px max(24px,calc((100% - 1100px)/2)) 42px}header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.8}h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:10px 0 14px}.subtitle{max-width:850px;color:#e5ebff;margin:0}.wrap{max-width:1100px;margin:0 auto;padding:28px 22px 64px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:-16px;position:relative}.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.stat{padding:15px 16px}.stat b{display:block;font-size:22px;color:var(--blue)}.stat span{color:var(--muted);font-size:13px}.section-title{margin:38px 0 12px;font-size:23px}.intro{color:var(--muted);margin:0 0 14px}.flow{display:grid;gap:12px}.step{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}.step summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:46px 1fr auto;gap:14px;align-items:center;padding:16px 18px}.step summary::-webkit-details-marker{display:none}.num{height:38px;width:38px;border-radius:11px;background:var(--blue2);color:var(--blue);display:grid;place-items:center;font-weight:800}.step h3{margin:0;font-size:17px}.brief{font-size:13px;color:var(--muted)}.chev{font-size:20px;color:#7c879a;transition:transform .2s}.step[open] .chev{transform:rotate(90deg)}.body{border-top:1px solid var(--line);padding:18px 22px 22px}.body p{margin:8px 0}.body ul{padding-left:22px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{border:1px solid var(--line);border-radius:11px;padding:14px 16px;background:#fbfcff}.panel h4{margin:0 0 8px;font-size:14px;color:var(--muted)}.shape{font-weight:750;color:var(--blue)}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#101a2c;color:#eaf0ff;padding:14px 16px;border-radius:10px;overflow:auto;white-space:pre-wrap;line-height:1.6;margin:10px 0}.matrix{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;background:#f6f8fc;border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;white-space:pre;line-height:1.55}.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700;background:var(--blue2);color:var(--blue);margin-right:5px}.tag.teal{background:var(--teal2);color:var(--teal)}.tag.orange{background:var(--orange2);color:var(--orange)}.tag.purple{background:var(--purple2);color:var(--purple)}.tag.green{background:var(--green2);color:var(--green)}.arrow{text-align:center;color:#91a0b9;font-size:22px;height:16px;line-height:12px}.note{border-left:4px solid var(--orange);background:var(--orange2);padding:12px 15px;border-radius:0 9px 9px 0;margin:12px 0}.good{border-left-color:var(--teal);background:var(--teal2)}table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}th{background:#f1f4fa}.token{display:inline-block;padding:7px 10px;border:1px solid #cdd8ef;background:#f8faff;border-radius:8px;margin:3px;font-family:ui-monospace,monospace}.mini{font-size:13px;color:var(--muted)}.bar{height:8px;background:#edf1fa;border-radius:99px;overflow:hidden;margin-top:7px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#3d69ec,#7a9bff)}.dimension{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.dimension div{padding:11px;border-radius:9px;background:#f4f7fc;border:1px solid var(--line);font-size:13px}.dimension strong{font-size:15px;color:var(--blue)}footer{margin-top:36px;padding:18px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}a{color:var(--blue)}button{border:1px solid var(--line);background:white;padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--ink);font-weight:650}.toolbar{display:flex;justify-content:flex-end;margin:12px 0;gap:8px}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}.grid2,.dimension{grid-template-columns:1fr}.step summary{grid-template-columns:40px 1fr auto;padding:13px}.brief{grid-column:2 / 4}.body{padding:15px}.wrap{padding-left:14px;padding-right:14px}header{padding:34px 20px 30px}}
+@media print{body{background:white}.step,.stat{box-shadow:none;break-inside:avoid}.step:not([open]) .body{display:block}button{display:none}header{background:#173a9b!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">MiniMax-H3 · Transformer block · matrix walkthrough</div>
+  <h1>一个 H3 Block 里，矩阵怎样一步步变换</h1>
+  <p class="subtitle">按官方 H3 配置中的真实维度，从 packed hidden states 开始，走过 AdaLN、QKV、QK Norm、3D RoPE、全注意力、FFN 和两次门控残差。点击每步可展开细节。</p>
+</header>
+<main class="wrap">
+<section class="stats">
+  <div class="stat"><b>5,376</b><span>hidden_size / 残差流宽度 H</span></div>
+  <div class="stat"><b>56 × 128</b><span>注意力头数 × 每头维度</span></div>
+  <div class="stat"><b>7,168</b><span>attention inner = 56 × 128</span></div>
+  <div class="stat"><b>14,336</b><span>FFN / SwiGLU 中间维度</span></div>
+  <div class="stat"><b>50</b><span>主 Transformer blocks</span></div>
+</section>
+
+<h2 class="section-title">先看完整数据流</h2>
+<p class="intro">令 packed 序列长度为 <b>T</b>。T 随视频帧数、分辨率、音频长度和输入内容变化，所以不固定；H3 的 block 主干始终把每个 token 表示为 5,376 维。</p>
+<div class="card" style="padding:18px 20px">
+<div class="formula">X [T, 5376]
+  → AdaLN 调制 → H [T, 5376]
+  → QKV 投影 [T, 21504] → Q,K,V 各 [T, 56, 128]
+  → Q/K RMSNorm + 3D MM-RoPE
+  → packed non-causal self-attention → [T, 56, 128]
+  → flatten [T, 7168] → output projection [T, 5376]
+  → X1 = X + gate_msa ⊙ attn_out
+  → AdaLN 调制 → H2 [T, 5376]
+  → SwiGLU FFN: 5376 → 28672 → split 2×14336 → 14336 → 5376
+  → Xout = X1 + gate_mlp ⊙ ffn_out</div>
+<div class="mini">主模型配置：hidden_size=5376、num_attention_heads=56、attention_head_dim=128、ffn_dim=14336。注意：H3 的注意力内部宽度 56×128=7168，大于 hidden_size 5376。</div>
+</div>
+<div class="toolbar"><button onclick="document.querySelectorAll('details.step').forEach(x=>x.open=true)">全部展开</button><button onclick="document.querySelectorAll('details.step').forEach(x=>x.open=false)">全部收起</button></div>
+
+<h2 class="section-title">逐步展开真实矩阵形状</h2>
+<div class="flow">
+<details class="step" open>
+<summary><span class="num">1</span><div><h3>AdaLN：从 timestep 条件生成六组调制向量</h3><div class="brief">输入 timestep embedding；每个 token 按 timestep / modality 索引选参数</div></div><span class="chev">›</span></summary>
+<div class="body">
+<p>每个主 block 有自己的 AdaLN 投影。官方配置的 timestep MLP 输出维度是 <b>2,688</b>；AdaLN 一次输出 96,768 个数，恰好是 <b>3 modality × 6 组 × 5,376 hidden</b>。</p>
+<div class="grid2">
+<div class="panel"><h4>矩阵乘法（数学写法）</h4><div class="formula">E_t [N_t, 2688]
+× W_adaln [2688, 96768]
++ b [96768]
+→ A [N_t, 96768]
+→ reshape [N_t, 3, 6, 5376]</div><div class="mini">PyTorch Linear 的 weight 通常以 [out_features, in_features] 存储，因此 checkpoint 参数张量对应 [96768, 2688]；上式 W 按数学乘法方向书写。</div></div>
+<div class="panel"><h4>reshape 后的六组含义</h4><div class="matrix">modality 0: shift_msa [5376], scale_msa [5376], gate_msa [5376],
+            shift_mlp [5376], scale_mlp [5376], gate_mlp [5376]
+modality 1: 同样六组
+modality 2: 同样六组</div><div class="mini">官方代码把六组按 shift_msa、scale_msa、gate_msa、shift_mlp、scale_mlp、gate_mlp 排列。token 的 modality tag 和 timestep index 决定查哪一行。</div></div>
+</div>
+<p>若一次 forward 的 packed tokens 有 T 行，索引查表后，六个调制张量各自为 <span class="shape">[T, 5376]</span>。同一 timestep、同一 modality 的 token 可以复用同一行调制参数。</p>
+<div class="formula">例如 4 个 token 的 modality tag： [video, audio, text, video]
+索引表为每个 token 取对应的 (timestep, modality) 行
+scale_msa_lookup → [4, 5376]
+shift_msa_lookup → [4, 5376]
+……六组都如此</div>
+<div class="note">不要把 AdaLN 参数理解成 token 内容。它是由扩散 timestep 条件投影出的控制向量；索引步骤把相应控制向量分配给 packed 序列里的每个 token。三种 modality 的具体 tag 编码顺序应以所用版本的模型代码为准。</div>
+</div>
+</details>
+
+<details class="step" open>
+<summary><span class="num">2</span><div><h3>Norm1 + AdaLN：逐通道缩放、平移</h3><div class="brief">残差流维持 [T, 5376]；归一化不改变矩阵形状</div></div><span class="chev">›</span></summary>
+<div class="body">
+<p>每个 token 的 5,376 个通道独立参与 RMSNorm 归一化，然后乘以 (1+scale_{msa})，再加 shift。</p>
+<div class="formula">X [T,5376]
+→ RMSNorm(X) [T,5376]
+H = RMSNorm(X) ⊙ (1 + scale_msa[T,5376]) + shift_msa[T,5376]
+→ H [T,5376]</div>
+<div class="panel"><h4>单个 token 的逐通道公式（i 为 token，j 为 hidden channel）</h4><div class="formula">H[i,j] = RMSNorm(X[i,:])[j] × (1 + scale_msa[i,j]) + shift_msa[i,j]
+其中 i ∈ [0,T)，j ∈ [0,5376)</div></div>
+<p>这里的 scale、shift 都是长度 5,376 的向量，对应地调节该 token 的每一个隐藏通道。Norm 权重向量同样是 5,376 维。</p>
+</div>
+</details>
+
+<details class="step" open>
+<summary><span class="num">3</span><div><h3>QKV 投影：从残差宽度映射到注意力宽度</h3><div class="brief">5376 → 3×7168；每个 7168 再拆成 56 个 128 维头</div></div><span class="chev">›</span></summary>
+<div class="body">
+<p>注意力每个头有 128 维，56 个头拼接后宽度为 <b>7,168</b>。所以 Q、K、V 的总投影宽度是 <b>21,504</b>。</p>
+<div class="formula">H [T, 5376] × W_qkv [5376, 21504]
+→ QKV [T, 21504]
+→ split(last dim, [7168,7168,7168])
+→ Q [T,7168], K [T,7168], V [T,7168]
+→ reshape
+→ Q,K,V 各 [T,56,128]</div>
+<div class="dimension">
+<div><strong>输入通道</strong><br>H = 5,376</div>
+<div><strong>每个 Q/K/V 输出宽度</strong><br>56 heads × 128 = 7,168</div>
+<div><strong>融合 QKV 输出宽度</strong><br>3 × 7,168 = 21,504</div>
+</div>
+<div class="mini">逻辑矩阵 W 按输入维×输出维表示为 [5376,21504]。若查看 PyTorch Linear 的 weight 参数存储，常见形状是 [21504,5376]。原始 Diffusers 权重也可能分别存 Q/K/V 投影，运行时再融合。</div>
+</div>
+</details>
+
+<details class="step" open>
+<summary><span class="num">4</span><div><h3>Q/K RMSNorm + 3D MM-RoPE：处理每个头的内容和位置</h3><div class="brief">Q、K、V 为 [T,56,128]；RoPE 只旋转每头的 96 个通道</div></div><span class="chev">›</span></summary>
+<div class="body">
+<div class="grid2">
+<div class="panel"><h4>Q/K RMSNorm</h4><div class="formula">Q [T,56,128] → 每个 (token, head) 对 128 维归一化
+K [T,56,128] → 同样处理
+Norm 权重：每个 Q/K 通道向量 [128]</div><p>它让每个注意力头的 Q 和 K 在进入点积前按各自的 RMSNorm 规则归一化。V 不做这一步 Q/K 归一化。</p></div>
+<div class="panel"><h4>3D MM-RoPE</h4><div class="formula">位置坐标：每个 token 有 (t, h, w)
+rope_freq_dim = 16 / 轴
+3 个轴 × 16 频率 × 每频率 2 个旋转通道 = 96
+每头 128 维中：96 维参与旋转，32 维不旋转</div><p>RoPE 把时空位置信息注入 Q 和 K，使注意力分数能反映 token 的相对位置。频率表按时间、高度、宽度三轴构造。</p></div>
+</div>
+<p>形状保持不变：<span class="shape">Q′, K′, V: [T,56,128]</span>。</p>
+</div>
+</details>
+
+<details class="step" open>
+<summary><span class="num">5</span><div><h3>Packed self-attention：每个 token 从序列读取信息</h3><div class="brief">概念上的注意力矩阵为 [56,T,T]；实现通常分块计算，不完整物化</div></div><span class="chev">›</span></summary>
+<div class="body">
+<p>对某个 head (h)，Q、K、V 的形状分别是 `[T,128]`。它先对 token 两两做 QK 点积，再对分数做 softmax，最后用概率加权 V。</p>
+<div class="formula">每个 head h：
+Q′_h [T,128] × K′_hᵀ [128,T]
+→ scores_h [T,T] / √128
+→ softmax(scores_h) = P_h [T,T]
+P_h [T,T] × V_h [T,128]
+→ O_h [T,128]
+
+56 个 head 合并：O [T,56,128]
+flatten heads → [T,7168]</div>
+<div class="note good"><b>cu_seqlens 的意义：</b>它标出 packed batch 中每段序列的边界。若是一条 H3 请求，概念上可看作一个长度 T 的 attention document；若多个独立样本被打包，段与段之间不能互相注意。H3 主注意力是 full self-attention、non-causal；模态 token 位于统一 packed 序列中。</div>
+<p>真实 kernel 通常按 tile 计算 score/softmax/value，不会把完整 `[56,T,T]` 保存到显存。这个矩阵是理解数学关系的概念形状。</p>
+</div>
+</details>
+
+<details class="step" open>
+<summary><span class="num">6</span><div><h3>Attention 输出投影 + 第一次门控残差</h3><div class="brief">7,168 → 5,376，然后按 gate_msa 逐元素加回原 X</div></div><span class="chev">›</span></summary>
+<div class="body">
+<div class="formula">O [T,7168] × W_o [7168,5376]
+→ attn_out [T,5376]
+
+X1 = X + gate_msa ⊙ attn_out
+X [T,5376], gate_msa [T,5376], attn_out [T,5376]
+→ X1 [T,5376]</div>
+<p>注意力结果回到残差流维度 5,376。`gate_msa` 也是逐 token、逐 hidden channel 的门控向量，控制注意力分支更新的大小。</p>
+</div>
+</details>
+
+<details class="step" open>
+<summary><span class="num">7</span><div><h3>Norm2 + AdaLN：准备 FFN 输入</h3><div class="brief">结构与 Attention 前归一化类似，但使用 MLP 对应的 scale/shift</div></div><span class="chev">›</span></summary>
+<div class="body">
+<div class="formula">RMSNorm(X1) [T,5376]
+H2 = RMSNorm(X1) ⊙ (1 + scale_mlp[T,5376]) + shift_mlp[T,5376]
+→ H2 [T,5376]</div>
+<p>这一步把 Attention 更新后的状态重新归一化，再按 MLP 这一路的 AdaLN 参数逐通道调制。这里的 scale/shift 与步骤 2 的 Attention 参数不同。</p>
+</div>
+</details>
+
+<details class="step" open>
+<summary><span class="num">8</span><div><h3>SwiGLU FFN：扩展通道、门控非线性、压回残差宽度</h3><div class="brief">5376 → 28672 → 两路各 14336 → 5376</div></div><span class="chev">›</span></summary>
+<div class="body">
+<p>FFN 对每个 token 独立做特征变换；这里不在 token 之间交换信息。第一层同时产生 gate 与 up 两路。</p>
+<div class="formula">H2 [T,5376] × W_fc1 [5376,28672]
+→ Z [T,28672]
+→ split Z = [G | U]
+G [T,14336], U [T,14336]
+
+Y = SiLU(G) ⊙ U
+→ Y [T,14336]
+
+Y [T,14336] × W_fc2 [14336,5376]
+→ ffn_out [T,5376]</div>
+<div class="mini">数学写法中的权重按 [in,out] 排列；PyTorch Linear weight 参数一般按 [out,in] 存储，因此 fc1 weight 常见为 [28672,5376]、fc2 weight 常见为 [5376,14336]。</div>
+</div>
+</details>
+
+<details class="step" open>
+<summary><span class="num">9</span><div><h3>第二次门控残差：得到 block 输出</h3><div class="brief">FFN 分支输出乘 gate_mlp，再加回 Attention 后的 X1</div></div><span class="chev">›</span></summary>
+<div class="body">
+<div class="formula">Xout = X1 + gate_mlp ⊙ ffn_out
+X1 [T,5376], gate_mlp [T,5376], ffn_out [T,5376]
+→ Xout [T,5376]</div>
+<p>block 的输入输出形状一致，都是 `[T,5376]`。50 个主 Transformer blocks 依次堆叠时，一个 block 的 `Xout` 就是下一个 block 的 `X`。</p>
+</div>
+</details>
+</div>
+
+<h2 class="section-title">本页涉及的矩阵尺寸总表</h2>
+<div class="card" style="padding:12px 16px;overflow:auto">
+<table>
+<thead><tr><th>位置</th><th>逻辑运算 / 张量</th><th>真实形状</th><th>解释</th></tr></thead>
+<tbody>
+<tr><td>残差流</td><td>X、X1、Xout</td><td>[T, 5376]</td><td>每个 packed token 的隐藏表示</td></tr>
+<tr><td>AdaLN 输入</td><td>timestep embedding</td><td>[N_t, 2688]</td><td>时间条件 MLP 的输出宽度</td></tr>
+<tr><td>AdaLN 投影</td><td>linear 输出</td><td>[N_t, 96768]</td><td>3 modality × 6 调制组 × 5376</td></tr>
+<tr><td>AdaLN 查表</td><td>每组 scale/shift/gate</td><td>各 [T, 5376]</td><td>按 token 的 timestep/modality 索引选取</td></tr>
+<tr><td>QKV</td><td>融合 QKV 输出</td><td>[T, 21504]</td><td>三份 [T,7168]</td></tr>
+<tr><td>Heads</td><td>Q、K、V 各自</td><td>[T, 56, 128]</td><td>56 个头，每头 128 维</td></tr>
+<tr><td>Attention</td><td>单头 score（概念形状）</td><td>[T, T]</td><td>实际通常分块算，不完整物化</td></tr>
+<tr><td>Attention 输出</td><td>合并 heads</td><td>[T, 7168]</td><td>56×128</td></tr>
+<tr><td>FFN 第一层</td><td>gate + up</td><td>[T, 28672]</td><td>2×14336</td></tr>
+<tr><td>SwiGLU 中间态</td><td>SiLU(gate) ⊙ up</td><td>[T, 14336]</td><td>FFN 中间宽度</td></tr>
+<tr><td>FFN 输出</td><td>fc2</td><td>[T, 5376]</td><td>回到残差流宽度</td></tr>
+</tbody></table>
+</div>
+
+<h2 class="section-title">阅读时记住三件事</h2>
+<div class="grid2">
+<div class="card" style="padding:17px"><span class="tag">残差流</span><p><b>一直是 5,376 维。</b>两次子层都把结果投影回 5,376，再加回残差。</p></div>
+<div class="card" style="padding:17px"><span class="tag teal">Attention</span><p><b>注意力宽度是 7,168。</b>它由 56 个 128 维头组成；与 5,376 不同。</p></div>
+<div class="card" style="padding:17px"><span class="tag purple">AdaLN</span><p><b>输出控制向量。</b>每 token 查到六个 5,376 维向量，分别调制 Attention 与 FFN。</p></div>
+<div class="card" style="padding:17px"><span class="tag orange">动态长度</span><p><b>T 不是模型常量。</b>输入分辨率、视频帧数、音频长度和 packed layout 会改变 T。</p></div>
+</div>
+<div class="note" style="margin-top:18px"><b>关于多卡切分：</b>上面是单个 block 的全局逻辑形状。TP/USP 下每张卡只持有切分后的权重或 token/head 分片，局部矩阵形状会变化；全局模型配置不变。若要画具体每卡矩阵，需要再指定 TP、Ulysses degree 和是否 padding。</div>
+
+<footer>
+<p><b>参考配置与实现</b></p>
+<ul>
+<li><a href="https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/FL2VA/transformer/config.json" target="_blank" rel="noopener">MiniMax-H3 官方 FL2VA transformer config</a>：hidden size、head 数、head dim、FFN dim、AdaLN 输出维度等。</li>
+<li><a href="https://github.com/huggingface/diffusers/blob/main/src/diffusers/models/transformers/transformer_minimax_h3.py" target="_blank" rel="noopener">Diffusers MiniMax-H3 实现</a>：AdaLN 调制顺序、QKV/heads、QK Norm、3D RoPE、packed self-attention 和 block 数据流。</li>
+</ul>
+<p>说明：矩阵形状按 H3 主 DiT Transformer block 的配置展示；忽略 batch 维、并行分片和具体权重数值。权重矩阵公式以 [in,out] 数学方向书写，框架参数存储常见为转置形状。</p>
+</footer>
+</main>
+</body>
+</html>

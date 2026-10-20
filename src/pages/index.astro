@@ -51,24 +51,43 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 <style>
 	.intro {
 		text-align: center;
-		margin: 2em 0 3em;
+		margin: 3em 0 3.5em;
 	}
 	.intro h1 {
-		font-size: 3em;
-		letter-spacing: -0.02em;
+		font-size: 3.2em;
+		font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+		letter-spacing: 0.08em;
+		text-transform: lowercase;
+		color: #fff;
+		text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 32px rgba(0, 240, 255, 0.4),
+			0 0 60px rgba(255, 46, 151, 0.3);
+		animation: flicker 6s infinite;
+	}
+	@keyframes flicker {
+		0%, 91%, 94%, 98%, 100% {
+			opacity: 1;
+		}
+		92%, 93% {
+			opacity: 0.6;
+		}
+		96%, 97% {
+			opacity: 0.85;
+		}
 	}
 	.tagline {
-		color: var(--accent);
-		font-size: 1.2em;
+		color: var(--neon-pink);
+		font-size: 1.15em;
 		font-weight: 700;
-		margin: 0.5em 0 1em;
+		letter-spacing: 0.05em;
+		margin: 0.6em 0 1em;
+		text-shadow: var(--glow-pink);
 	}
 	.bio {
 		color: rgb(var(--gray));
 	}
 	.posts h2 {
 		font-size: 1.5em;
-		border-bottom: 1px solid rgb(var(--gray-light));
+		border-bottom: 1px solid var(--border);
 		padding-bottom: 0.4em;
 	}
 	.posts ul {
@@ -81,7 +100,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 		align-items: baseline;
 		gap: 1em;
 		padding: 0.6em 0;
-		border-bottom: 1px dashed rgb(var(--gray-light));
+		border-bottom: 1px dashed var(--border);
 	}
 	.posts a {
 		color: rgb(var(--gray-dark));
@@ -89,6 +108,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 	}
 	.posts a:hover {
 		color: var(--accent);
+		text-shadow: var(--glow-cyan);
 	}
 	.date {
 		color: rgb(var(--gray));

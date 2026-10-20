@@ -2,7 +2,7 @@
 title: 'LLM Inference Internals：从 Prompt 到 Token 的缓存与调度机制'
 description: '跟着三个请求走完一次 LLM 推理：Tokenize、Prefix Cache、KV Cache、Chunked Prefill 与调度时序，以及 vLLM 与 SGLang 的差异。'
 pubDate: '2026-10-19'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/hero-cyber.png'
 ---
 
 重点不再是"Cache 的名称列表"，而是：**请求在什么时间到达，什么时候被 Tokenize，何时命中前缀，何时新建 KV，何时生成第一个 Token，什么时候回收，下一请求又怎么复用。**
